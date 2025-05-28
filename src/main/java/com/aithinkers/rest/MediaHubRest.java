@@ -1,13 +1,24 @@
 package com.aithinkers.rest;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aithinkers.entity.Friendship;
 import com.aithinkers.entity.Post;
 import com.aithinkers.entity.RegisterUser;
+import com.aithinkers.jwt.JwtUtils;
+import com.aithinkers.jwt.LoginRequest;
+import com.aithinkers.jwt.LoginResponse;
 import com.aithinkers.repo.FriendshipRepository;
 import com.aithinkers.repo.MediaHubRepository;
 import com.aithinkers.repo.PostRepository;
@@ -36,6 +50,18 @@ public class MediaHubRest {
 
 	@Autowired
 	FriendshipRepository friendshipRepository;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private JwtUtils jwtUtils;
+
+	// Testing Get
+	@GetMapping("/getMessage")
+	public String getMsg() {
+		return "Hello Media Hub";
+	}
 
 	// Register New User
 	@PostMapping("/registerTheUser")
@@ -91,7 +117,7 @@ public class MediaHubRest {
 		return ResponseEntity.ok("Post uploaded.");
 	}
 
-	//Add friend
+	// Add friend
 	@PostMapping("/addFriend")
 	public ResponseEntity<String> addFriend(@RequestParam Integer user_1, @RequestParam Integer user_2) {
 
@@ -105,7 +131,6 @@ public class MediaHubRest {
 			Friendship friendship = new Friendship();
 			friendship.setRequester(regdUser_1);
 			friendship.setAddressee(regdUser_2);
-			
 
 			friendshipRepository.save(friendship);
 
@@ -115,9 +140,32 @@ public class MediaHubRest {
 		}
 	}
 
-	@GetMapping("/getMessage")
-	public String getMsg() {
-		return "Hello Media Hub";
-	}
+	// SignIn
+    @PostMapping("/signIn")
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        Authentication authentication;
+        try {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        } catch (AuthenticationException exception) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "Bad credentials");
+            map.put("status", false);
+            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+        }
 
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
+
+        return ResponseEntity.ok(response);
+    }
 }
