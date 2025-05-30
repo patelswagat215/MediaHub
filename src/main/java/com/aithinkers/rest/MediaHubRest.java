@@ -31,7 +31,7 @@ import com.aithinkers.jwt.JwtUtils;
 import com.aithinkers.jwt.LoginRequest;
 import com.aithinkers.jwt.LoginResponse;
 import com.aithinkers.repo.FriendshipRepository;
-import com.aithinkers.repo.MediaHubRepository;
+import com.aithinkers.repo.RegisterUserRepository;
 import com.aithinkers.repo.PostRepository;
 import com.aithinkers.service.FileStorageService;
 
@@ -40,7 +40,7 @@ import com.aithinkers.service.FileStorageService;
 public class MediaHubRest {
 
 	@Autowired
-	MediaHubRepository repo;
+	RegisterUserRepository repo;
 
 	@Autowired
 	PostRepository postRepo;

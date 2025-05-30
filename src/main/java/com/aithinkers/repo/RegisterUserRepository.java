@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.aithinkers.entity.RegisterUser;
 
 
-public interface MediaHubRepository extends JpaRepository<RegisterUser, Integer> {
+public interface RegisterUserRepository extends JpaRepository<RegisterUser, Integer> {
 
 	  Optional<RegisterUser> findByUserName(String userName);
 }
