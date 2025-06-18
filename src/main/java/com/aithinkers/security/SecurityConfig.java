@@ -60,18 +60,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-            .exceptionHandling(ex -> 
-            	ex.authenticationEntryPoint(unauthorizedHandler))
+    	
+        http
+        	.csrf(csrf -> csrf.disable())
+        
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
             
-            .sessionManagement(session ->
-            	session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/mediaHub/signIn").permitAll()
-                .anyRequest().authenticated())
-            
-            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                                          .requestMatchers("/mediaHub/signIn").permitAll()
+                                          .anyRequest().authenticated())
+            							  .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -1,4 +1,4 @@
-package com.aithinkers.entity;
+package com.aithinkers.service;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +21,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // If you have role field in your entity, you can use: new SimpleGrantedAuthority(user.getRole())
         return Collections.singleton(new SimpleGrantedAuthority("USER"));
     }
 
@@ -32,7 +31,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserName(); // Match your entity field
+        return user.getUserName();
     }
 
     @Override

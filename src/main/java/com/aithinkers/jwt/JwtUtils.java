@@ -16,6 +16,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
+	//This class is responsible for generating, validating, and parsing JWT tokens.
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     @Value("${spring.app.jwtSecret}")
@@ -46,8 +47,8 @@ public class JwtUtils {
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                         .verifyWith((SecretKey) key())
-                .build().parseSignedClaims(token)
-                .getPayload().getSubject();
+                        .build().parseSignedClaims(token)
+                        .getPayload().getSubject();
     }
 
     private Key key() {

@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import com.aithinkers.entity.RegisterUser;
-import com.aithinkers.entity.UserPrincipal;
 import com.aithinkers.repo.RegisterUserRepository;
 
 @Service
@@ -18,9 +17,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    	
         RegisterUser user = userRepository
-        		.findByUserName(username)
-        		.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        						.findByUserName(username)
+        						.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         return new UserPrincipal(user); 
     }

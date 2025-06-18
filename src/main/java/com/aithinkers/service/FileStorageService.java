@@ -10,8 +10,7 @@ import java.nio.file.*;
 public class FileStorageService {
 
     private final String uploadDir = System.getProperty("user.dir") + "/uploads";
-
-    public String save(MultipartFile file) {
+	public String save(MultipartFile file) {
         try {
             // Ensure the directory exists
             Path uploadPath = Paths.get(uploadDir);

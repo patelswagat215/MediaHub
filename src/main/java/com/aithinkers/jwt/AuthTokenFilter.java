@@ -19,6 +19,8 @@ import java.io.IOException;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
+	//It extracts the JWT token from the request header, validates it, 
+	//and sets the authentication context if the token is valid.
     @Autowired
     private JwtUtils jwtUtils;
 

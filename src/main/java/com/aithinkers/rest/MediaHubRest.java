@@ -40,10 +40,12 @@ import com.aithinkers.service.FileStorageService;
 public class MediaHubRest {
 
 	@Autowired
-	RegisterUserRepository repo;
+	RegisterUserRepository registerUserRepository;
+
 
 	@Autowired
-	PostRepository postRepo;
+	PostRepository postRepository;
+
 
 	@Autowired
 	FileStorageService fileStorageService;
@@ -74,7 +76,7 @@ public class MediaHubRest {
 		user.setPhoneNumber(phoneNumber);
 		user.setPassword(password);
 
-		repo.save(user);
+		registerUserRepository.save(user);
 
 		return "User registered successfully!!!";
 	}
@@ -82,7 +84,7 @@ public class MediaHubRest {
 	// Login the user
 	@PostMapping("/loginTheUser")
 	public ResponseEntity<String> loginExistingUser(@RequestParam String userName, @RequestParam String password) {
-		Optional<RegisterUser> theUser = repo.findByUserName(userName);
+		Optional<RegisterUser> theUser = registerUserRepository.findByUserName(userName);
 
 		if (theUser.isPresent()) {
 			RegisterUser user = theUser.get();
@@ -105,14 +107,14 @@ public class MediaHubRest {
 		// Save file in local
 		String filePath = fileStorageService.save(file);
 
-		Optional<RegisterUser> theUser = repo.findById(userId);
+		Optional<RegisterUser> theUser = registerUserRepository.findById(userId);
 		Post post = new Post();
 		post.setCaption(caption);
 		post.setMediaType(mediaType);
 		post.setMediaUrl(filePath);
 		post.setUser(theUser.get());
 
-		postRepo.save(post);
+		postRepository.save(post);
 
 		return ResponseEntity.ok("Post uploaded.");
 	}
@@ -121,8 +123,8 @@ public class MediaHubRest {
 	@PostMapping("/addFriend")
 	public ResponseEntity<String> addFriend(@RequestParam Integer user_1, @RequestParam Integer user_2) {
 
-		Optional<RegisterUser> requester = repo.findById(user_1);
-		Optional<RegisterUser> addressee = repo.findById(user_2);
+		Optional<RegisterUser> requester = registerUserRepository.findById(user_1);
+		Optional<RegisterUser> addressee = registerUserRepository.findById(user_2);
 
 		if (requester.isPresent() && addressee.isPresent()) {
 			RegisterUser regdUser_1 = requester.get();

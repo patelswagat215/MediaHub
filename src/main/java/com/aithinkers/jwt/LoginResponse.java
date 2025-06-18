@@ -3,6 +3,7 @@ package com.aithinkers.jwt;
 import java.util.List;
 
 public class LoginResponse {
+	// A POJO used to structure the server's response after a successful login.
     private String jwtToken;
 
     private String username;

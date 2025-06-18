@@ -1,6 +1,7 @@
 package com.aithinkers.jwt;
 
 public class LoginRequest {
+	// A simple POJO (Plain Old Java Object) that represents the login credentials sent by the client.
     private String username;
 
     private String password;
