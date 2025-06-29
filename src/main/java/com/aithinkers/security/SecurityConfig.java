@@ -69,7 +69,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests(auth -> auth
-                                          .requestMatchers("/mediaHub/signIn").permitAll()
+                                          .requestMatchers("/signIn").permitAll()
                                           .anyRequest().authenticated())
             							  .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

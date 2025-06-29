@@ -34,140 +34,44 @@ import com.aithinkers.repo.FriendshipRepository;
 import com.aithinkers.repo.RegisterUserRepository;
 import com.aithinkers.repo.PostRepository;
 import com.aithinkers.service.FileStorageService;
+import com.aithinkers.service.MediaHubService;
 
 @RestController
 @RequestMapping("/mediaHub")
 public class MediaHubRest {
 
 	@Autowired
-	RegisterUserRepository registerUserRepository;
-
-
-	@Autowired
-	PostRepository postRepository;
-
-
-	@Autowired
-	FileStorageService fileStorageService;
-
-	@Autowired
-	FriendshipRepository friendshipRepository;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private JwtUtils jwtUtils;
-
-	// Testing Get
-	@GetMapping("/getMessage")
-	public String getMsg() {
-		return "Hello Media Hub";
-	}
+	MediaHubService mediaHubService;
 
 	// Register New User
 	@PostMapping("/registerTheUser")
-	public String registerUser(@RequestParam String userName, @RequestParam String email,
-			@RequestParam String phoneNumber, @RequestParam String password) {
+	public String registerUser(@RequestParam String userName, @RequestParam String email,@RequestParam String phoneNumber, @RequestParam String password) {
 
-		RegisterUser user = new RegisterUser();
-		user.setUserName(userName);
-		user.setEmail(email);
-		user.setPhoneNumber(phoneNumber);
-		user.setPassword(password);
-
-		registerUserRepository.save(user);
-
-		return "User registered successfully!!!";
+		return mediaHubService.registerTheUser(userName, email, phoneNumber, password);
 	}
+	
 
 	// Login the user
 	@PostMapping("/loginTheUser")
 	public ResponseEntity<String> loginExistingUser(@RequestParam String userName, @RequestParam String password) {
-		Optional<RegisterUser> theUser = registerUserRepository.findByUserName(userName);
-
-		if (theUser.isPresent()) {
-			RegisterUser user = theUser.get();
-
-			if (user.getPassword().equals(password)) {
-				return ResponseEntity.ok("Login successful!");
-			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-		}
+		
+		return mediaHubService.loginTheUser(userName, password);
 	}
+	
 
 	// Upload a post
 	@PostMapping("/uploadThePost")
-	public ResponseEntity<String> uploadPost(@RequestParam Integer userId, @RequestParam String caption,
-			@RequestParam String mediaType, @RequestParam MultipartFile file) {
+	public ResponseEntity<String> uploadPost(@RequestParam Integer userId, @RequestParam String caption,@RequestParam String mediaType, @RequestParam MultipartFile file) {
 
-		// Save file in local
-		String filePath = fileStorageService.save(file);
-
-		Optional<RegisterUser> theUser = registerUserRepository.findById(userId);
-		Post post = new Post();
-		post.setCaption(caption);
-		post.setMediaType(mediaType);
-		post.setMediaUrl(filePath);
-		post.setUser(theUser.get());
-
-		postRepository.save(post);
-
-		return ResponseEntity.ok("Post uploaded.");
+		return mediaHubService.uploadPost(userId, caption, mediaType, file);
 	}
+	
 
 	// Add friend
 	@PostMapping("/addFriend")
-	public ResponseEntity<String> addFriend(@RequestParam Integer user_1, @RequestParam Integer user_2) {
-
-		Optional<RegisterUser> requester = registerUserRepository.findById(user_1);
-		Optional<RegisterUser> addressee = registerUserRepository.findById(user_2);
-
-		if (requester.isPresent() && addressee.isPresent()) {
-			RegisterUser regdUser_1 = requester.get();
-			RegisterUser regdUser_2 = addressee.get();
-
-			Friendship friendship = new Friendship();
-			friendship.setRequester(regdUser_1);
-			friendship.setAddressee(regdUser_2);
-
-			friendshipRepository.save(friendship);
-
-			return ResponseEntity.ok("Friend added!");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Friend not found!");
-		}
+	public ResponseEntity<String> addFriend(@RequestParam Integer userId_1, @RequestParam Integer userId_2) {
+		
+		return mediaHubService.addFriend(userId_1, userId_2);
 	}
 
-	// SignIn
-    @PostMapping("/signIn")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication;
-        try {
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        } catch (AuthenticationException exception) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("message", "Bad credentials");
-            map.put("status", false);
-            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
-
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
-
-        return ResponseEntity.ok(response);
-    }
 }
