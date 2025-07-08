@@ -28,7 +28,7 @@ public class Post {
 	@Column(name="media_url")
 	private String mediaUrl;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private RegisterUser user;
+	@ManyToOne 					  //Relationship(Many posts are created by one user.)
+	@JoinColumn(name = "user_id") 
+	private RegisterUser user;	  //Foreign key
 }

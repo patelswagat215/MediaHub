@@ -16,11 +16,11 @@ public class Friendship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "requester_id")
-    private RegisterUser requester;
+    @ManyToOne						//Many Friends with one user
+    @JoinColumn(name = "requester_id") 
+    private RegisterUser requester; //Foreign key
 
     @ManyToOne
-    @JoinColumn(name = "addressee_id")
-    private RegisterUser addressee;
+    @JoinColumn(name = "addressee_id") //Many Friends with one user
+    private RegisterUser addressee; //Foreign key
 }

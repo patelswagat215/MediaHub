@@ -52,9 +52,10 @@ public class LoginRest {
 
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities()
+        								.stream()
+        								.map(item -> item.getAuthority())
+        								.collect(Collectors.toList());
 
         LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
 
