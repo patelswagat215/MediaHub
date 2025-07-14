@@ -1,5 +1,6 @@
 package com.aithinkers.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,19 +9,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+
 @Entity
-@Table(name = "friendship")
+@Table(name = "comments")
 @Data
-public class Friendship {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne						//Many Friends with one user
-    @JoinColumn(name = "requester_id") 
-    private RegisteredUser requester; //Foreign key
-
+    
+    @Column(name = "content")
+    private String content;
+    
     @ManyToOne
-    @JoinColumn(name = "addressee_id") //Many Friends with one user
-    private RegisteredUser addressee; //Foreign key
-}
+    @JoinColumn(name = "post_id")
+    private Post post;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private RegisteredUser user;
+} 

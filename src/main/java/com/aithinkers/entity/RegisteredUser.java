@@ -13,7 +13,7 @@ import lombok.Data;
 @Entity
 @Table(name = "registered_user")
 @Data
-public class RegisterUser {
+public class RegisteredUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,9 @@ public class RegisterUser {
 
 	@Column(name = "phone_number")
 	private String phoneNumber;
+	
+	@Column(name="role")
+	private String role;
 	
 	@Column(name="password")
 	private String password;

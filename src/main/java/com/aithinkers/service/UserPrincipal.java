@@ -7,15 +7,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.aithinkers.entity.RegisterUser;
+import com.aithinkers.entity.RegisteredUser;
 
 public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private RegisterUser user;
+    private RegisteredUser user;
 
-    public UserPrincipal(RegisterUser user) {
+    public UserPrincipal(RegisteredUser user) {
         this.user = user;
     }
 

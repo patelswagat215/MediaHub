@@ -69,15 +69,15 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests(auth -> auth
-                                          .requestMatchers("/signIn",
-                                        		  	"/mediaHub/registerTheUser",
+                                          .requestMatchers("/register",
+                                        		    	"/signIn",
                                         		  	"/swagger-ui.html",
                                         	        "/swagger-ui/**",
                                         	        "/v3/api-docs/**",
                                         	        "/v3/api-docs",
                                         	        "/swagger-resources/**",
                                         	        "/webjars/**").permitAll()
-                                          .anyRequest().authenticated())
+                                       .anyRequest().authenticated())
             							  .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

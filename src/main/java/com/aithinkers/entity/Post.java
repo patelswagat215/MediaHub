@@ -30,5 +30,5 @@ public class Post {
 
 	@ManyToOne 					  //Relationship(Many posts are created by one user.)
 	@JoinColumn(name = "user_id") 
-	private RegisterUser user;	  //Foreign key
+	private RegisteredUser user;	  //Foreign key
 }
