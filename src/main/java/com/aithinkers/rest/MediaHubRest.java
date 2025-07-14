@@ -27,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.aithinkers.dto.LoginRequest;
 import com.aithinkers.dto.LoginResponse;
-import com.aithinkers.dto.UploadPost;
 import com.aithinkers.entity.Friendship;
 import com.aithinkers.entity.Post;
 import com.aithinkers.jwt.JwtUtils;
