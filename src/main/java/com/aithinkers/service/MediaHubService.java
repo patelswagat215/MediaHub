@@ -18,10 +18,18 @@ import com.aithinkers.repo.CommentRepository;
 import com.aithinkers.repo.FriendshipRepository;
 import com.aithinkers.repo.LikeRepository;
 import com.aithinkers.repo.PostRepository;
-import com.aithinkers.repo.RegisterUserRepository;
+import com.aithinkers.repo.RegisteredUserRepository;
+import com.aithinkers.dto.RegisterUserRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Service layer for MediaHub business logic, including user registration, posts, friends, comments, and likes.
+ */
 @Service
 public class MediaHubService {
+
+	private static final Logger logger = LoggerFactory.getLogger(MediaHubService.class);
 
 	@Autowired
 	private PostRepository postRepository;
@@ -30,7 +38,7 @@ public class MediaHubService {
 	FriendshipRepository friendshipRepository;
 
 	@Autowired
-	private RegisterUserRepository registerUserRepository;
+	private RegisteredUserRepository registeredUserRepository;
 
 	@Autowired
 	private CommentRepository commentRepository;
@@ -41,16 +49,32 @@ public class MediaHubService {
 	@Autowired
 	private FileStorageService fileStorageService;
 
-	// Method 1 - Register User
-	public String registerTheUser(String userName, String email, String phoneNumber, String password, String role) {
+	/**
+	 * Registers a new user if email and phone number are unique.
+	 * @param request the registration request DTO
+	 * @return success message or duplicate user message
+	 */
+	public String registerUser(RegisterUserRequest request) {
+		logger.info("Attempting to register user with email: {} and phone: {}", request.getEmail(), request.getPhoneNumber());
+		// Check for duplicate email
+		if (registeredUserRepository.findByEmail(request.getEmail()).isPresent()) {
+			logger.warn("Duplicate email registration attempt: {}", request.getEmail());
+			return "Duplicate user: Email already exists.";
+		}
+		// Check for duplicate phone number
+		if (registeredUserRepository.findByPhoneNumber(request.getPhoneNumber()).isPresent()) {
+			logger.warn("Duplicate phone registration attempt: {}", request.getPhoneNumber());
+			return "Duplicate user: Phone number already exists.";
+		}
 		RegisteredUser user = new RegisteredUser();
-		user.setUserName(userName);
-		user.setEmail(email);
-		user.setPhoneNumber(phoneNumber);
-		user.setPassword(password);
-		user.setRole(role);
+		user.setUserName(request.getUserName());
+		user.setEmail(request.getEmail());
+		user.setPhoneNumber(request.getPhoneNumber());
+		user.setPassword(request.getPassword());
+		user.setRole(request.getRole());
 
-		registerUserRepository.save(user);
+		registeredUserRepository.save(user);
+		logger.info("User registered successfully: {}", request.getEmail());
 		return "User registered successfully!!!";
 	}
 
@@ -58,7 +82,7 @@ public class MediaHubService {
 	public ResponseEntity<String> uploadPost(Integer userId, String caption, String mediaType, MultipartFile file) {
 		try {
 			// Check if user exists
-			Optional<RegisteredUser> theUser1 = registerUserRepository.findById(userId);
+			Optional<RegisteredUser> theUser1 = registeredUserRepository.findById(userId);
 			if (!theUser1.isPresent()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found!");
 			}
@@ -97,8 +121,8 @@ public class MediaHubService {
 
 	//Add Friend
 	public ResponseEntity<String> addFriend(Integer user_1, Integer user_2) {
-		Optional<RegisteredUser> requester = registerUserRepository.findById(user_1);
-		Optional<RegisteredUser> addressee = registerUserRepository.findById(user_2);
+		Optional<RegisteredUser> requester = registeredUserRepository.findById(user_1);
+		Optional<RegisteredUser> addressee = registeredUserRepository.findById(user_2);
 
 		if (requester.isPresent() && addressee.isPresent()) {
 			RegisteredUser regdUser_1 = requester.get();
@@ -230,7 +254,7 @@ public class MediaHubService {
 	// Get all posts for a user
 	public ResponseEntity<?> getUserPosts(Integer userId) {
 		try {
-			Optional<RegisteredUser> user = registerUserRepository.findById(userId);
+			Optional<RegisteredUser> user = registeredUserRepository.findById(userId);
 			if (user.isPresent()) {
 				// This would require adding a method to PostRepository
 				// List<Post> posts = postRepository.findByUser(user.get());
@@ -248,7 +272,7 @@ public class MediaHubService {
 	// Get all friends for a user
 	public ResponseEntity<?> getUserFriends(Integer userId) {
 		try {
-			Optional<RegisteredUser> user = registerUserRepository.findById(userId);
+			Optional<RegisteredUser> user = registeredUserRepository.findById(userId);
 			if (user.isPresent()) {
 				// This would require adding methods to FriendshipRepository
 				// List<Friendship> friendships = friendshipRepository.findByRequesterOrAddressee(user.get(), user.get());
@@ -263,4 +287,9 @@ public class MediaHubService {
 		}
 	}
 
+    // Hash a plain text password using BCrypt
+    public String encodePassword(String plainPassword) {
+        org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+        return encoder.encode(plainPassword);
+    }
 }

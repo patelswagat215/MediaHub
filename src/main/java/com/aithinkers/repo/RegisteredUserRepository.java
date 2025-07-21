@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.aithinkers.entity.RegisteredUser;
 
 
-public interface RegisterUserRepository extends JpaRepository<RegisteredUser, Integer> {
+public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, Integer> {
 
 	  Optional<RegisteredUser> findByUserName(String userName);
+	  Optional<RegisteredUser> findByEmail(String email);
+	  Optional<RegisteredUser> findByPhoneNumber(String phoneNumber);
 }

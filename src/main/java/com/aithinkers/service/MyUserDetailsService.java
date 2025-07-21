@@ -7,18 +7,18 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import com.aithinkers.entity.RegisteredUser;
-import com.aithinkers.repo.RegisterUserRepository;
+import com.aithinkers.repo.RegisteredUserRepository;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private RegisterUserRepository userRepository;
+    private RegisteredUserRepository registeredUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     	
-        RegisteredUser user = userRepository
+        RegisteredUser user = registeredUserRepository
         						.findByUserName(username)
         						.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 

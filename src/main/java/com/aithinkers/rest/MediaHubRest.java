@@ -31,7 +31,6 @@ import com.aithinkers.entity.Friendship;
 import com.aithinkers.entity.Post;
 import com.aithinkers.jwt.JwtUtils;
 import com.aithinkers.repo.FriendshipRepository;
-import com.aithinkers.repo.RegisterUserRepository;
 import com.aithinkers.repo.PostRepository;
 import com.aithinkers.service.FileStorageService;
 import com.aithinkers.service.MediaHubService;
