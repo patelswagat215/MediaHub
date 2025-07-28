@@ -19,8 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.aithinkers.jwt.AuthEntryPointJwt;
-import com.aithinkers.jwt.AuthTokenFilter;
+import com.aithinkers.jwt.AuthenticationEntryPointImpl;
+import com.aithinkers.jwt.AuthenticationTokenFilter;
+import com.aithinkers.jwt.JwtUtils;
 import com.aithinkers.service.MyUserDetailsService;
 
 @Configuration
@@ -29,10 +30,12 @@ import com.aithinkers.service.MyUserDetailsService;
 public class SecurityConfig {
 
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private AuthenticationEntryPointImpl unauthorizedHandler;
 
-    @Autowired
-    private AuthTokenFilter authTokenFilter;
+    @Bean
+    public AuthenticationTokenFilter authTokenFilter(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
+        return new AuthenticationTokenFilter(jwtUtils, userDetailsService);
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -59,7 +62,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationTokenFilter authTokenFilter) throws Exception {
     	
         http
         	.csrf(csrf -> csrf.disable())

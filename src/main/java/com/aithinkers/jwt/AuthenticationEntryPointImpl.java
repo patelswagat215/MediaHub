@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 //If a user tries to access a protected resource without valid credentials,
 //this entry point is triggered to return a 401 Unauthorized response.
-    private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationEntryPointImpl.class);
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
@@ -30,7 +30,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
         final Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
+        body.put("error", "Unauthorized/ Missing JWT token/ Expired token/ Invalid token/ wrong URL/ Missing URL");
         body.put("message", authException.getMessage());
         body.put("path", request.getServletPath());
 

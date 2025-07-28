@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,8 @@ import com.aithinkers.dto.LoginResponse;
 import com.aithinkers.dto.RegisterUserRequest;
 import com.aithinkers.jwt.JwtUtils;
 import com.aithinkers.service.MediaHubService;
+
+import jakarta.validation.Valid;
 
 /**
  * REST controller for user registration and authentication endpoints.
@@ -52,7 +56,7 @@ public class SignupController {
 	 * @return ResponseEntity with status and message
 	 */
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@RequestBody RegisterUserRequest registerUser) {
+	public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterUserRequest registerUser,BindingResult bindingResult) {
 		logger.info("Registration attempt for email: {} and phone: {}", registerUser.getEmail(), registerUser.getPhoneNumber());
 		try {
 			// Hash the plain text password before registration
@@ -78,6 +82,7 @@ public class SignupController {
 	@PostMapping("/signIn")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 		logger.info("Authentication attempt for username: {}", loginRequest.getUsername());
+		
 		Authentication authentication;
 		
 		try {
