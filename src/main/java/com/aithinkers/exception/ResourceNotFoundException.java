@@ -1,4 +1,4 @@
-package com.mediahub.exception;
+package com.aithinkers.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

@@ -37,9 +37,9 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/public")
-public class SignupController {
+public class SignupRest {
 
-	private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
+	private static final Logger logger = LoggerFactory.getLogger(SignupRest.class);
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -56,7 +56,7 @@ public class SignupController {
 	 * @return ResponseEntity with status and message
 	 */
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterUserRequest registerUser,BindingResult bindingResult) {
+	public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterUserRequest registerUser) {
 		logger.info("Registration attempt for email: {} and phone: {}", registerUser.getEmail(), registerUser.getPhoneNumber());
 		try {
 			// Hash the plain text password before registration
@@ -80,7 +80,7 @@ public class SignupController {
 	 * @return ResponseEntity with JWT token and user info
 	 */
 	@PostMapping("/signIn")
-	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 		logger.info("Authentication attempt for username: {}", loginRequest.getUsername());
 		
 		Authentication authentication;
